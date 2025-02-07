@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const skillCategories = [
   {
@@ -26,7 +26,8 @@ const SkillCard = ({ title, skills, delay }) => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-8');
         }
       },
       {
@@ -44,18 +45,18 @@ const SkillCard = ({ title, skills, delay }) => {
   return (
     <div 
       ref={cardRef} 
-      className="card"
-      style={{ animationDelay: `${delay}ms` }}
+      className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg opacity-0 translate-y-8 transition-all duration-700 ease-out"
+      style={{ transitionDelay: `${delay}ms` }}
     >
-      <h3 className="text-primary mb-4">{title}</h3>
-      <div className="grid grid-cols-2 gap-2">
-        {skills.map((skill, index) => (
+      <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-4">{title}</h3>
+      <div className="grid grid-cols-2 gap-3">
+        {skills.map((skill) => (
           <div 
             key={skill}
-            className="flex items-center"
+            className="flex items-center space-x-2"
           >
-            <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-            <span className="text-light">{skill}</span>
+            <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">{skill}</span>
           </div>
         ))}
       </div>
@@ -65,7 +66,7 @@ const SkillCard = ({ title, skills, delay }) => {
 
 const Skills = () => {
   const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -87,65 +88,61 @@ const Skills = () => {
   }, []);
 
   return (
-    <section id="skills" className="section" ref={sectionRef}>
-      <div className="container">
-        <div className="text-center mb-8">
-          <h2>Technical Skills</h2>
-          <p className="text-light">
+    <section 
+      id="skills" 
+      className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900"
+      ref={sectionRef}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Technical Skills
+          </h2>
+          <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full mb-4"></div>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Here are the technologies and tools I work with
           </p>
         </div>
 
-        <div className="grid">
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
           {skillCategories.map((category, index) => (
-            <div 
+            <SkillCard 
               key={category.title}
-              className={`slide-in-${index % 2 === 0 ? 'left' : 'right'}`}
-              style={{ 
-                animationDelay: `${index * 200}ms`,
-                animationPlayState: isVisible ? 'running' : 'paused'
-              }}
-            >
-              <SkillCard 
-                title={category.title} 
-                skills={category.skills} 
-                delay={index * 100}
-              />
-            </div>
+              title={category.title} 
+              skills={category.skills} 
+              delay={index * 100}
+            />
           ))}
         </div>
 
-        {/* Skill Level Indicators */}
-        <div className="mt-8">
-          <h3 className="text-center mb-4">Proficiency Levels</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-16">
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-8">
+            Proficiency Levels
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {['Beginner', 'Intermediate', 'Advanced', 'Expert'].map((level, index) => (
               <div 
                 key={level}
-                className="card text-center"
-                style={{ 
-                  animationDelay: `${(index + skillCategories.length) * 100}ms`,
-                  animationPlayState: isVisible ? 'running' : 'paused'
-                }}
+                className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg"
               >
-                <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+                <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-primary"
+                    className="absolute top-0 left-0 h-full bg-blue-600 dark:bg-blue-400 transition-all duration-1000 ease-out"
                     style={{ 
-                      width: `${(index + 1) * 25}%`,
-                      transition: 'width 1s ease-out',
+                      width: isVisible ? `${(index + 1) * 25}%` : '0%',
                     }}
                   ></div>
                 </div>
-                <span className="text-light">{level}</span>
+                <p className="text-center text-sm text-gray-600 dark:text-gray-300 font-medium">
+                  {level}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Additional Skills */}
-        <div className="mt-8 text-center">
-          <p className="text-light">
+        <div className="mt-16 text-center">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Additionally, I have experience with Agile methodologies, team leadership,
             and project management tools like Jira and Trello.
           </p>
